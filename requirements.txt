@@ -1,0 +1,12 @@
+customtkinter>=5.2.0
+requests>=2.31.0
+pygame>=2.5.0
+pydub>=0.25.1
+cryptography>=41.0.0
+python-dotenv>=1.0.0
+edge-tts>=7.3.1
+elevenlabs>=0.2.0
+httpx>=0.25.0
+openai>=1.0.0
+google-genai>=2.25.0
+imageio-ffmpeg>=0.6.0
