@@ -9,7 +9,7 @@ class EdgeTTSProvider(TTSProvider):
     requires_api_key = False
     supports_speed = True
     default_voice = "en-US-AriaNeural"
-    supported_formats = ["mp3", "wav"]
+    supported_formats = ["mp3"]
     max_text_length = 10000
     
     # Popular Edge TTS voices

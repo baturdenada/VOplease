@@ -297,7 +297,7 @@ class VOpleaseApp(ctk.CTk):
         self.format_var = ctk.StringVar(value=self.output_format)
         self.format_combo = ctk.CTkComboBox(
             format_frame,
-            values=["mp3", "wav", "ogg"],
+            values=["mp3", "wav"],
             variable=self.format_var,
             width=250
         )
@@ -550,6 +550,12 @@ class VOpleaseApp(ctk.CTk):
             api_key = config.get_api_key(name)
             if hasattr(self, 'api_key_var'):
                 self.api_key_var.set(api_key if api_key else "")
+
+            if hasattr(self, "format_combo"):
+                formats = list(self.current_provider.supported_formats)
+                self.format_combo.configure(values=formats)
+                if self.format_var.get() not in formats:
+                    self.format_var.set(formats[0])
             
             # Refresh voices
             self.refresh_voices()

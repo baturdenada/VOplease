@@ -23,10 +23,10 @@ A powerful, standalone Windows desktop application for text-to-speech generation
 - **Speed control** — 0.25x to 4x speed adjustment
 - **Pitch control** — -20 to +20 semitone adjustment
 - **Volume control** — 0% to 200% volume
-- **Multiple formats** — MP3, WAV, OGG output
+- **Multiple formats** — MP3 and WAV output
 - **Audio player** — Built-in playback with seek, pause, volume
 - **Choose output folder** — Pick and remember where generated files are saved
-- **Download** — Save generated audio as MP3/WAV/OGG
+- **Download** — Save generated audio as MP3/WAV
 - **Dark/Light theme** — System-aware theme with manual toggle
 - **Encrypted API keys** — Keys stored encrypted locally
 - **Activity log** — Real-time generation logs
@@ -73,7 +73,7 @@ python build.py
 5. **Paste Text** — No character limit, paste entire chapters
 5. **Generate** — Click "Generate Audio" and wait
 6. **Choose Folder** — Select where generated audio should be saved
-7. **Play/Download** — Preview with the built-in player, then save as MP3/WAV/OGG
+7. **Play/Download** — Preview with the built-in player, then save as MP3/WAV
 
 ---
 

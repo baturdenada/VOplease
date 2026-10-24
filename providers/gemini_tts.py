@@ -7,9 +7,9 @@ not use Google Cloud Text-to-Speech or Application Default Credentials.
 from __future__ import annotations
 
 import asyncio
+import audioop
 import base64
 import io
-import math
 import re
 import wave
 from typing import List
@@ -162,23 +162,38 @@ def _merge_wav(parts: list[bytes]) -> bytes:
 
 def _convert_audio(wav_data: bytes, output_format: str, volume: float) -> bytes:
     output_format = output_format.lower()
-    if output_format == "wav" and abs(volume - 1.0) < 0.01:
-        return wav_data
-
     try:
-        from pydub import AudioSegment
-        import imageio_ffmpeg
+        with wave.open(io.BytesIO(wav_data), "rb") as source:
+            channels = source.getnchannels()
+            sample_width = source.getsampwidth()
+            sample_rate = source.getframerate()
+            frames = source.readframes(source.getnframes())
 
-        AudioSegment.converter = imageio_ffmpeg.get_ffmpeg_exe()
-        segment = AudioSegment.from_file(io.BytesIO(wav_data), format="wav")
-        if volume <= 0:
-            segment = segment - 120
-        elif abs(volume - 1.0) >= 0.01:
-            segment = segment + (20.0 * math.log10(volume))
-        target = io.BytesIO()
-        export_format = "ogg" if output_format == "ogg" else output_format
-        segment.export(target, format=export_format)
-        return target.getvalue()
+        if abs(volume - 1.0) >= 0.01:
+            frames = audioop.mul(frames, sample_width, max(0.0, volume))
+
+        if output_format == "wav":
+            target = io.BytesIO()
+            with wave.open(target, "wb") as output:
+                output.setnchannels(channels)
+                output.setsampwidth(sample_width)
+                output.setframerate(sample_rate)
+                output.writeframes(frames)
+            return target.getvalue()
+
+        if output_format == "mp3":
+            if sample_width != 2:
+                frames = audioop.lin2lin(frames, sample_width, 2)
+            import lameenc
+
+            encoder = lameenc.Encoder()
+            encoder.set_bit_rate(64)
+            encoder.set_in_sample_rate(sample_rate)
+            encoder.set_channels(channels)
+            encoder.set_quality(2)
+            return encoder.encode(frames) + encoder.flush()
+
+        raise ValueError(f"Unsupported Gemini output format: {output_format}")
     except Exception as exc:
         raise RuntimeError(
             f"Gemini generated WAV audio, but conversion to {output_format.upper()} failed: {exc}"
@@ -193,7 +208,7 @@ class GeminiTTSProvider(TTSProvider):
     supports_speed = True
     supports_pitch = True
     default_voice = "Kore"
-    supported_formats = ["mp3", "wav", "ogg"]
+    supported_formats = ["mp3", "wav"]
     # Long input is handled internally in chunks.
     max_text_length = 10_000_000
 

@@ -27,10 +27,8 @@ args = [
     "--onefile",
     "--windowed",
     "--clean",
-    # These two libraries load non-Python assets at runtime. Ordinary Python
-    # modules are discovered from imports and should not be copied as data.
+    # CustomTkinter loads theme assets at runtime.
     "--collect-all=customtkinter",
-    "--collect-all=imageio_ffmpeg",
 ]
 
 if icon_path:
